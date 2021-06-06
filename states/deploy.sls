@@ -79,7 +79,7 @@ for group, projects in config('workspace:projects', {}).items():
 
       Git.latest(
         f"deploy {repo}",
-        name=f"git@{url}:/{repo}.git",
+        name=f"git@{url}:{group}/{repo}.git",
         target=join(gitpath, group, repo),
         identity=config('workspace:sshkey'),
         force_reset='remote-changes',
