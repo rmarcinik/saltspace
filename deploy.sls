@@ -31,10 +31,10 @@ File.directory(
   win_owner=grains('username'),
   makedirs=True,
 )
-
+statespath = join(saltpath, 'states')
 File.directory(
   'create states dir',
-  name=join(saltpath, 'states'),
+  name=statespath,
   win_owner=grains('username'),
   makedirs=True,
 )
@@ -62,7 +62,7 @@ File.serialize(
     'file_client': 'local',
     'state_verbose': False,
     'default_include': 'conf/*.conf',
-    'file_roots': {'base': [join(saltpath, 'states')]},
+    'file_roots': {'base': [statespath]},
   },
   formatter='yaml'
 )
@@ -80,8 +80,8 @@ for repo, enabled in config('workspace:projects', {}).items():
     )
 
     File.symlink(
-      f"link {repo} to salt dir",
-      name=join(saltpath, repo),
+      f"link {repo} to states dir",
+      name=join(statespath, repo),
       target=target,
       makedirs=True
     )
