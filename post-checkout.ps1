@@ -60,4 +60,3 @@ function set-config ($Path) {
 }
 
 set-config -Path $Base
-set-config -Path $Custom

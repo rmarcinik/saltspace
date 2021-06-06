@@ -1,3 +1,3 @@
 base:
   a4:
-    - workspace
+    - init
