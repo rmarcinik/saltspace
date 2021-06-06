@@ -1,3 +1,3 @@
 base:
   a4:
-    - deploy
+    - init
