@@ -20,7 +20,10 @@ default_include: '*.conf'
 
 file_roots:
   base:
-    - $File_root"
+    - $File_root/states
+pillar_roots:
+  base:
+    - $File_root/pillar"
 
 Set-Variable -Name $Custom -Value "# Custom config for the workspace deployment
 #
@@ -36,9 +39,9 @@ workspace:
   url: github.com
   sshkey: C:/Users/rigel/.ssh/github
   projects:
-    rmarcinik/Redball: True
-    rmarcinik/local: True
-    rmarcinik/saltspace: True"
+    rmarcinik:
+      saltspace: True
+      local: True"
 
 function set-config ($Path) {
     $Value = Get-Variable -Name $Path -ValueOnly
