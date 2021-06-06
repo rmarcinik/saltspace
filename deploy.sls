@@ -48,7 +48,7 @@ File.directory(
 
 Environ.setenv(
   'add workspace variable',
-  name = 'workspace',
+  name = 'WORKSPACE',
   value = workspace,
   permanent = 'HKLM',
 )
