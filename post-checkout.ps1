@@ -1,9 +1,50 @@
-$Path='minion'
-$Value="
+$Base = 'minion'
+$Custom = 'me.conf'
+
+$File_root = "$PWD".replace('\','/')
+Set-Variable -Name $Base -Value "ipc_mode: tcp
+log_level: debug
+file_client: local
+state_verbose: True
+default_include: '*.conf'
+
 file_roots:
   base:
-    - $PWD
-"
-$Content = Get-Content -Path "salt/minion"
-$Value = $Content + $Value.replace('\','/')
-Set-Content -Value $Value -Path $Path
+    - $File_root"
+
+Set-Variable -Name $Custom -Value "# Custom config for the workspace deployment
+#
+#  dir: the location to create a salt and git directory
+#  url: a remote git host to pull projects from
+#  sshkey: the private key that has been set up to reach the git host
+#  projects: these are the subpaths in the git instance, True will download and link the repo
+#    rmarcinik/Redball: True
+#    rmarcinik/saltspace: True
+
+workspace:
+  dir: C:/Users/rigel/workspace
+  url: github.com
+  sshkey: C:/Users/rigel/.ssh/github
+  projects:
+    rmarcinik/Redball: True
+    rmarcinik/local: True
+    rmarcinik/saltspace: True"
+
+function set-config ($Path) {
+    $Value = Get-Variable -Name $Path -ValueOnly
+    $Correct=$FALSE
+
+    if(Test-Path $Path) {
+        $Content = Get-Content -Path $Path -Raw
+        $Correct = $Content -eq $Value
+    }
+    if(!$Correct) {
+        Set-Content -Value $Value -Path $Path -NoNewline
+        $Content = Get-Content -Path $Path -Raw
+        $Correct = $Content -eq $Value
+    }
+    $Correct
+}
+
+set-config -Path $Base
+set-config -Path $Custom
