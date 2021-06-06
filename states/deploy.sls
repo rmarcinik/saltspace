@@ -110,7 +110,7 @@ File.serialize(
 
 File.serialize(
   'create states top',
-  name=join(pillarpath, 'top.sls'),
+  name=join(statespath, 'top.sls'),
   dataset={'base': {grains('id'):includes}},
   formatter='yaml'
 )
