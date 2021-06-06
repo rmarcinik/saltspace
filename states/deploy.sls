@@ -13,10 +13,10 @@
 
 from os.path import join
 
-workspace = config('workspace:dir')
+workspace = pillar('workspace:dir')
 saltpath = join(workspace, 'salt')
 gitpath = join(workspace, 'git')
-url = config('workspace:url')
+url = pillar('workspace:url')
 
 statespath = join(saltpath, 'states')
 pillarpath = join(saltpath, 'pillar')
@@ -73,28 +73,28 @@ File.serialize(
 
 includes = []
 
-for group, projects in config('workspace:projects', {}).items():
+for group, projects in pillar('workspace:projects', {}).items():
   for repo, enabled in projects.items():
     if enabled:
 
       Git.latest(
         f"deploy {repo}",
         name=f"git@{url}:{group}/{repo}.git",
-        target=join(gitpath, group, repo),
-        identity=config('workspace:sshkey'),
+        target=join(gitpath, repo),
+        identity=pillar('workspace:sshkey'),
         force_reset='remote-changes',
       )
 
       File.symlink(
         f"link {repo} to states dir",
         name=join(statespath, repo),
-        target=join(gitpath, group, repo, 'states'),
+        target=join(gitpath, repo, 'states'),
         makedirs=True
       )
       File.symlink(
         f"link {repo} to pillar dir",
         name=join(pillarpath, repo),
-        target=join(gitpath, group, repo, 'pillar'),
+        target=join(gitpath, repo, 'pillar'),
         makedirs=True
       )
 
