@@ -1,3 +1,13 @@
+<#
+run ps1 files with a git hook:
+.\.git\hooks\post-checkout
+
+#!C:/Program\ Files/Git/usr/bin/sh.exe
+echo
+exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\post-checkout.ps1"
+exit
+
+#>
 $Base = 'minion'
 $Custom = 'me.conf'
 
