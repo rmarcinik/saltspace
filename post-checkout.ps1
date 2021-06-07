@@ -9,7 +9,7 @@ exit
 
 #>
 $Base = 'minion'
-$Custom = 'me.conf'
+$Custom = 'pillar/init.sls'
 
 $File_root = "$PWD".replace('\','/')
 Set-Variable -Name $Base -Value "ipc_mode: tcp
@@ -59,10 +59,10 @@ workspace:
       saltspace: True
       local: True
 
-gitpath: $gitpath
-saltpath: $saltpath
-statespath: $statespath
-pillarpath: $pillarpath"
+  gitpath: $gitpath
+  saltpath: $saltpath
+  statespath: $statespath
+  pillarpath: $pillarpath"
 
 function set-config ($Path) {
     $Value = Get-Variable -Name $Path -ValueOnly
