@@ -25,6 +25,22 @@ pillar_roots:
   base:
     - $File_root/pillar"
 
+
+function norm ($Parent, $Child) {
+    $path = Join-Path -Path $Parent -ChildPath $Child
+    $path.replace('\','/')
+}
+$userprofile = $env:USERPROFILE
+
+$sshkey = norm $userprofile '.ssh\github'
+$workspace = norm $userprofile 'workspace'
+
+$gitpath = norm $Workspace 'git'
+$saltpath = norm $Workspace 'salt'
+
+$statespath = norm $saltpath 'states'
+$pillarpath = norm $saltpath 'pillar'
+
 Set-Variable -Name $Custom -Value "# Custom config for the workspace deployment
 #
 #  dir: the location to create a salt and git directory
@@ -35,13 +51,18 @@ Set-Variable -Name $Custom -Value "# Custom config for the workspace deployment
 #    rmarcinik/saltspace: True
 
 workspace:
-  dir: C:/Users/rigel/workspace
+  dir: $workspace
   url: github.com
-  sshkey: C:/Users/rigel/.ssh/github
+  sshkey: $sshkey
   projects:
     rmarcinik:
       saltspace: True
-      local: True"
+      local: True
+
+gitpath: $gitpath
+saltpath: $saltpath
+statespath: $statespath
+pillarpath: $pillarpath"
 
 function set-config ($Path) {
     $Value = Get-Variable -Name $Path -ValueOnly
