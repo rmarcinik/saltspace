@@ -10,27 +10,28 @@
 
   link the project files into the salt tree
 '''
-
-from os.path import join
+import os
+def norm (*paths):
+  return os.path.join(*paths).replace(os.sep, '/')
 
 workspace = pillar('workspace:dir')
-saltpath = join(workspace, 'salt')
-gitpath = join(workspace, 'git')
+saltpath = pillar('workspace:saltpath')
+gitpath = pillar('workspace:gitpath')
 url = pillar('workspace:url')
 
-statespath = join(saltpath, 'states')
-pillarpath = join(saltpath, 'pillar')
+statespath = pillar('workspace:statespath')
+pillarpath = pillar('workspace:pillarpath')
 
 File.directory(
   'create salt dir',
-  name=join(saltpath),
+  name=saltpath,
   win_owner=grains('username'),
   makedirs=True,
 )
 
 File.directory(
   'create config dir',
-  name=join(saltpath, 'conf'),
+  name=norm(saltpath, 'conf'),
   win_owner=grains('username'),
   makedirs=True,
 )
@@ -44,7 +45,7 @@ File.directory(
 
 File.directory(
   'create pillar dir',
-  name=join(saltpath, 'pillar'),
+  name=pillarpath,
   win_owner=grains('username'),
   makedirs=True,
 )
@@ -59,7 +60,7 @@ Environ.setenv(
 
 File.serialize(
   'create local base config',
-  name=join(saltpath, 'minion'),
+  name=norm(saltpath, 'minion'),
   dataset={
     'ipc_mode': 'tcp',
     'file_client': 'local',
@@ -80,21 +81,21 @@ for group, projects in pillar('workspace:projects', {}).items():
       Git.latest(
         f"deploy {repo}",
         name=f"git@{url}:{group}/{repo}.git",
-        target=join(gitpath, repo),
+        target=norm(gitpath, repo),
         identity=pillar('workspace:sshkey'),
         force_reset='remote-changes',
       )
 
       File.symlink(
         f"link {repo} to states dir",
-        name=join(statespath, repo),
-        target=join(gitpath, repo, 'states'),
+        name=norm(statespath, repo),
+        target=norm(gitpath, repo, 'states'),
         makedirs=True
       )
       File.symlink(
         f"link {repo} to pillar dir",
-        name=join(pillarpath, repo),
-        target=join(gitpath, repo, 'pillar'),
+        name=norm(pillarpath, repo),
+        target=norm(gitpath, repo, 'pillar'),
         makedirs=True
       )
 
@@ -103,14 +104,14 @@ for group, projects in pillar('workspace:projects', {}).items():
 
 File.serialize(
   'create pillar top',
-  name=join(pillarpath, 'top.sls'),
+  name=norm(pillarpath, 'top.sls'),
   dataset={'base': {grains('id'):includes}},
   formatter='yaml'
 )
 
 File.serialize(
   'create states top',
-  name=join(statespath, 'top.sls'),
+  name=norm(statespath, 'top.sls'),
   dataset={'base': {grains('id'):includes}},
   formatter='yaml'
 )
