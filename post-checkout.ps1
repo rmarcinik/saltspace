@@ -31,6 +31,7 @@ function set-config ($Path) {
 }
 
 $Base = 'minion'
+$Custom = 'pillar/init.sls'
 $userprofile = $env:USERPROFILE
 $sshkey = norm $userprofile '.ssh\github'
 
@@ -58,9 +59,9 @@ file_roots:
     - $statespath/states
 pillar_roots:
   base:
-    - $statespath/pillar
+    - $statespath/pillar"
 
-workspace:
+Set-Variable -Name $Custom -Value "workspace:
   dir: $workspace
   url: github.com
   sshkey: $sshkey
@@ -76,3 +77,4 @@ workspace:
 
 
 set-config -Path $Base
+set-config -Path $Custom
