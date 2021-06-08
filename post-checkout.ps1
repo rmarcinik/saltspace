@@ -55,10 +55,10 @@ default_include: '*.conf'
 
 file_roots:
   base:
-    - $File_root/states
+    - $statespath/states
 pillar_roots:
   base:
-    - $File_root/pillar
+    - $statespath/pillar
 
 workspace:
   dir: $workspace
