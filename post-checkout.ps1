@@ -23,7 +23,6 @@ function set-config ($Path) {
         $Correct = $Content -eq $Value
     }
     if(!$Correct) {
-        $Path = Get-Folder
         Set-Content -Value $Value -Path $Path -NoNewline
         $Content = Get-Content -Path $Path -Raw
         $Correct = $Content -eq $Value
