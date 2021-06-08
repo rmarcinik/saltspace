@@ -56,10 +56,10 @@ default_include: '*.conf'
 
 file_roots:
   base:
-    - $statespath/states
+    - $statespath
 pillar_roots:
   base:
-    - $statespath/pillar"
+    - $pillarpath"
 
 Set-Variable -Name $Custom -Value "workspace:
   dir: $workspace
