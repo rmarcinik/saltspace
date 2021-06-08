@@ -8,10 +8,46 @@ exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\post-checkout.ps
 exit
 
 #>
-$Base = 'minion'
-$Custom = 'pillar/init.sls'
+function norm ($Parent, $Child) {
+    # normalize the path with forward slashes for consistency
+    $path = Join-Path -Path $Parent -ChildPath $Child
+    $path.replace('\','/')
+}
 
-$File_root = "$PWD".replace('\','/')
+function set-config ($Path) {
+    $Value = Get-Variable -Name $Path -ValueOnly
+    $Correct=$FALSE
+
+    if(Test-Path $Path) {
+        $Content = Get-Content -Path $Path -Raw
+        $Correct = $Content -eq $Value
+    }
+    if(!$Correct) {
+        $Path = Get-Folder
+        Set-Content -Value $Value -Path $Path -NoNewline
+        $Content = Get-Content -Path $Path -Raw
+        $Correct = $Content -eq $Value
+    }
+    $Correct
+}
+
+$Base = 'minion'
+$userprofile = $env:USERPROFILE
+$sshkey = norm $userprofile '.ssh\github'
+
+#The root of the new workspace, where git files and other work will reside
+$workspace = norm $userprofile 'workspace'
+
+# The start of the workspace has a directory to store git repos
+# The salt directory will be configured for a local salt-minion
+$gitpath = norm $Workspace 'git'
+$saltpath = norm $Workspace 'salt'
+
+# Inside the salt path there are paths to store state and pillar files
+# This config will point to these and salt-call will use the local files to operate
+$statespath = norm $saltpath 'states'
+$pillarpath = norm $saltpath 'pillar'
+
 Set-Variable -Name $Base -Value "ipc_mode: tcp
 log_level: debug
 file_client: local
@@ -23,32 +59,7 @@ file_roots:
     - $File_root/states
 pillar_roots:
   base:
-    - $File_root/pillar"
-
-
-function norm ($Parent, $Child) {
-    $path = Join-Path -Path $Parent -ChildPath $Child
-    $path.replace('\','/')
-}
-$userprofile = $env:USERPROFILE
-
-$sshkey = norm $userprofile '.ssh\github'
-$workspace = norm $userprofile 'workspace'
-
-$gitpath = norm $Workspace 'git'
-$saltpath = norm $Workspace 'salt'
-
-$statespath = norm $saltpath 'states'
-$pillarpath = norm $saltpath 'pillar'
-
-Set-Variable -Name $Custom -Value "# Custom config for the workspace deployment
-#
-#  dir: the location to create a salt and git directory
-#  url: a remote git host to pull projects from
-#  sshkey: the private key that has been set up to reach the git host
-#  projects: these are the subpaths in the git instance, True will download and link the repo
-#    rmarcinik/Redball: True
-#    rmarcinik/saltspace: True
+    - $File_root/pillar
 
 workspace:
   dir: $workspace
@@ -64,20 +75,5 @@ workspace:
   statespath: $statespath
   pillarpath: $pillarpath"
 
-function set-config ($Path) {
-    $Value = Get-Variable -Name $Path -ValueOnly
-    $Correct=$FALSE
-
-    if(Test-Path $Path) {
-        $Content = Get-Content -Path $Path -Raw
-        $Correct = $Content -eq $Value
-    }
-    if(!$Correct) {
-        Set-Content -Value $Value -Path $Path -NoNewline
-        $Content = Get-Content -Path $Path -Raw
-        $Correct = $Content -eq $Value
-    }
-    $Correct
-}
 
 set-config -Path $Base
