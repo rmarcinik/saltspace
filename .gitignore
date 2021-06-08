@@ -1,3 +1,4 @@
 minion
 *.conf
 __pycache__
+pillar/init.sls
