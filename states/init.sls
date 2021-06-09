@@ -78,6 +78,7 @@ File.serialize(
     'default_include': 'conf/*.conf',
     'file_roots': {'base': [statespath]},
     'pillar_roots': {'base': [pillarpath]},
+    'workspace': pillar('workspace'),
   },
   formatter='yaml'
 )
@@ -87,11 +88,11 @@ includes = []
 for repo, enabled in pillar('workspace:repos', {}).items():
 
   group, name = split_repo(repo)
-
+  target = norm(gitpath, name)
   Git.latest(
     f"deploy {repo}",
     name=repo,
-    target=norm(gitpath, repo),
+    target=target,
     identity=pillar('workspace:sshkey'),
     force_reset='remote-changes',
   )
@@ -99,13 +100,13 @@ for repo, enabled in pillar('workspace:repos', {}).items():
   File.symlink(
     f"link {repo} to states dir",
     name=norm(statespath, name),
-    target=norm(gitpath, repo, 'states'),
+    target=norm(target, 'states'),
     makedirs=True
   )
   File.symlink(
     f"link {repo} to pillar dir",
     name=norm(pillarpath, name),
-    target=norm(gitpath, repo, 'pillar'),
+    target=norm(target, 'pillar'),
     makedirs=True
   )
 
