@@ -63,12 +63,10 @@ pillar_roots:
 
 Set-Variable -Name $Custom -Value "workspace:
   dir: $workspace
-  url: github.com
   sshkey: $sshkey
-  projects:
-    rmarcinik:
-      saltspace: True
-      local: True
+  repos:
+    git@github.com:rmarcinik/local.git: True
+    git@github.com:rmarcinik/saltspace.git: True
 
   gitpath: $gitpath
   saltpath: $saltpath
