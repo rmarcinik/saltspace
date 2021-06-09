@@ -90,7 +90,7 @@ for repo, enabled in pillar('workspace:repos', {}).items():
 
   Git.latest(
     f"deploy {repo}",
-    name=name,
+    name=repo,
     target=norm(gitpath, repo),
     identity=pillar('workspace:sshkey'),
     force_reset='remote-changes',
