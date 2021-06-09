@@ -72,12 +72,12 @@ File.serialize(
   'create local base config',
   name=norm(saltpath, 'minion'),
   dataset={
-    'ipc_mode': 'tcp',
-    'file_client': 'local',
-    'state_verbose': False,
-    'default_include': 'conf/*.conf',
-    'file_roots': {'base': [statespath]},
-    'pillar_roots': {'base': [pillarpath]},
+    'ipc_mode': config('ipc_mode'),
+    'file_client': config('file_client'),
+    'state_verbose': config('state_verbose'),
+    'default_include': config('default_include'),
+    'file_roots': config('file_roots'),
+    'pillar_roots': config('pillar_roots'),
     'workspace': pillar('workspace'),
   },
   formatter='yaml'
