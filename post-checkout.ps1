@@ -52,7 +52,6 @@ Set-Variable -Name $Base -Value "ipc_mode: tcp
 log_level: debug
 file_client: local
 state_verbose: True
-default_include: '*.conf'
 
 file_roots:
   base:
