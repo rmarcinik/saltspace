@@ -41,7 +41,7 @@ File.directory(
 
 File.directory(
   'create config dir',
-  name=norm(saltpath, 'conf'),
+  name=norm(saltpath, 'config'),
   win_owner=grains('username'),
   makedirs=True,
 )
